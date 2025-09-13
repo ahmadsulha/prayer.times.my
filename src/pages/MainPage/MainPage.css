@@ -1,0 +1,38 @@
+/* #prayer-time-table {
+    display: flex;
+    justify-content: center;
+} */
+
+#prayer-time-table {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+#prayer-time-table > div {
+  padding: 1rem;
+  border: 1px solid #ccc;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+#date {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+#next-prayer {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+}
+
+#next-prayer h1,
+#next-prayer h3 {
+    margin: 0;
+}
