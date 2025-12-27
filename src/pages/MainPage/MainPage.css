@@ -3,6 +3,11 @@
     justify-content: center;
 } */
 
+body {
+  background-color: rgb(58, 11, 58);
+  color: white;
+}
+
 #prayer-time-table {
   display: flex;
   justify-content: center;
@@ -35,4 +40,22 @@
 #next-prayer h1,
 #next-prayer h3 {
     margin: 0;
+}
+
+#cache-status-square {
+  position: fixed;
+  width: 1rem;
+  height: 1rem;
+  bottom: 0rem;
+  right: 0rem;
+  z-index: 1000;
+  background-color: grey;
+}
+
+.cache-status-from-cache {
+  background-color: green !important;
+}
+
+.cache-status-not-from-cache {
+  background-color: darkred !important;
 }

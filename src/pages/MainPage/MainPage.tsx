@@ -1,6 +1,6 @@
 import './MainPage.css'
 import type { PrayerTime } from "../../services/prayerTimesService"
-import { getPrayerTimes } from "../../services/prayerTimesService"
+import { getPrayerTimesTodayAndTomorrow } from "../../services/prayerTimesService"
 import { useEffect, useState } from "react"
 
 function MainPage(){
@@ -9,10 +9,11 @@ function MainPage(){
     
     useEffect(() => {
         const fetchPrayerTimes = async () => {
-            setPrayerTimes(await getPrayerTimes());
+            setPrayerTimes(await getPrayerTimesTodayAndTomorrow());
         };
         fetchPrayerTimes();
     }, []);
+
 
     useEffect(() => {
         if(prayerTimes) {
@@ -24,11 +25,12 @@ function MainPage(){
         const now = getCurrentTime();
         if (prayerTimes === null) return null;
 
-        if (now < prayerTimes?.fajr!) { return { prayerName: "Fajr", prayerTime: prayerTimes?.fajr! }; }
-        else if (now < prayerTimes?.dhuhr!) { return { prayerName: "Dhuhr", prayerTime: prayerTimes?.dhuhr! } ; }
-        else if (now < prayerTimes?.asr!) { return { prayerName: "Asr", prayerTime: prayerTimes?.asr! } ; }
-        else if (now < prayerTimes?.maghrib!) { return { prayerName: "Maghrib", prayerTime: prayerTimes?.maghrib! } ; }
-        else if (now < prayerTimes?.isha!) { return { prayerName: "Isha", prayerTime: prayerTimes?.isha! } ; }
+        if (now < prayerTimes?.today?.fajr!) { return { prayerName: "Fajr", prayerTime: prayerTimes?.today?.fajr! }; }
+        else if (now < prayerTimes?.today?.dhuhr!) { return { prayerName: "Dhuhr", prayerTime: prayerTimes?.today?.dhuhr! }; }
+        else if (now < prayerTimes?.today?.asr!) { return { prayerName: "Asr", prayerTime: prayerTimes?.today?.asr! }; }
+        else if (now < prayerTimes?.today?.maghrib!) { return { prayerName: "Maghrib", prayerTime: prayerTimes?.today?.maghrib! }; }
+        else if (now < prayerTimes?.today?.isha!) { return { prayerName: "Isha", prayerTime: prayerTimes?.today?.isha! }; }
+        else { return { prayerName: "Fajr", prayerTime: prayerTimes?.tomorrow?.fajr! }; }
         
         return null;
     };
@@ -47,7 +49,7 @@ function MainPage(){
     return (
         <>
             <div id="date">
-                {prayerTimes?.hijri} | {prayerTimes?.date}
+                {prayerTimes?.today?.hijri} | {prayerTimes?.today?.date}
             </div>
             <div id="next-prayer">
                 <h1>Upcoming prayer</h1>
@@ -57,37 +59,39 @@ function MainPage(){
             <div id="prayer-time-table">
                 <div>
                     <h1>Imsak</h1>
-                    <p>{prayerTimes?.imsak}</p>
+                    <p>{prayerTimes?.today?.imsak}</p>
                 </div>
                 <div>
                     <h1>Fajr</h1>
-                    <p>{prayerTimes?.fajr}</p>
+                    <p>{prayerTimes?.today?.fajr}</p>
                 </div>
                 <div>
                     <h1>Syuruk</h1>
-                    <p>{prayerTimes?.syuruk}</p>
+                    <p>{prayerTimes?.today?.syuruk}</p>
                 </div>
                 <div>
                     <h1>Dhuha</h1>
-                    <p>{prayerTimes?.dhuha}</p>
+                    <p>{prayerTimes?.today?.dhuha}</p>
                 </div>
                 <div>
                     <h1>Dhuhr</h1>
-                    <p>{prayerTimes?.dhuhr}</p>
+                    <p>{prayerTimes?.today?.dhuhr}</p>
                 </div>
                 <div>
                     <h1>Asr</h1>
-                    <p>{prayerTimes?.asr}</p>
+                    <p>{prayerTimes?.today?.asr}</p>
                 </div>
                 <div>
                     <h1>Maghrib</h1>
-                    <p>{prayerTimes?.maghrib}</p>
+                    <p>{prayerTimes?.today?.maghrib}</p>
                 </div>
                 <div>
                     <h1>Isha</h1>
-                    <p>{prayerTimes?.isha}</p>
+                    <p>{prayerTimes?.today?.isha}</p>
                 </div>
             </div>
+            <div id="cache-status-square"
+                className={`${prayerTimes?.isFromCache ? 'cache-status-from-cache' : 'cache-status-not-from-cache'}`}></div>
         </>
     );
 }
