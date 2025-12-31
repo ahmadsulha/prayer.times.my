@@ -38,15 +38,14 @@ export const getPrayerTimesTodayAndTomorrow = async (): Promise<PrayerTime | nul
         return cachedPrayerTimes;
 
     const reqDates = getDatesForTodayAndTomorrow();
-    const reqParams = new URLSearchParams();
-    reqParams.append("datestart", reqDates.today);
-    reqParams.append("dateend", reqDates.tomorrow);
-    const resp = await fetch("https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=duration&zone=wly01", {
-        method: "post",
-        body: reqParams
-    });
+    let data;
+    if (isWithinTheSameYear(reqDates)) {
+        data = await getPrayerTimesWithinTheSameYear(reqDates);
+    }
+    else {
+        data = await getPrayerTimesAcrossYears(reqDates);
+    }
 
-    const data = await resp.json();
     const prayerTimes: PrayerTime = mapPrayerTimesForTodayAndTomorrow(data.prayerTime);
     
     if(validateMultiplePrayerTimes(prayerTimes))
@@ -112,3 +111,49 @@ const getPrayerTimesFromCache = (): PrayerTime | null => {
 
     return {...cachedPrayerTimes, isFromCache: true};
 }
+
+const isWithinTheSameYear = (dates: { today: string, tomorrow: string }): boolean => {
+    let todayYear = parseInt(dates.today.slice(0, 4));
+    let tomorrowYear = parseInt(dates.tomorrow.slice(0, 4));
+    return tomorrowYear - todayYear == 0;
+}
+
+const getPrayerTimesWithinTheSameYear = async (reqDates : { today: string, tomorrow: string }): Promise<any> => {
+    const reqParams = new URLSearchParams();
+    reqParams.append("datestart", reqDates.today);
+    reqParams.append("dateend", reqDates.tomorrow);
+    const resp = await fetch("https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=duration&zone=wly01", {
+        method: "post",
+        body: reqParams
+    });
+
+    return await resp.json();
+}
+
+const getPrayerTimesAcrossYears = async (reqDates : { today: string, tomorrow: string }): Promise<any> => {
+    const reqParamsToday = new URLSearchParams();
+    reqParamsToday.append("datestart", reqDates.today);
+    reqParamsToday.append("dateend", reqDates.today);
+    
+    const respToday = await fetch("https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=duration&zone=wly01", {
+        method: "post",
+        body: reqParamsToday
+    });
+
+    const todayPrayerTimes = await respToday.json();
+    
+    const reqParamsTomorrow = new URLSearchParams();
+    reqParamsTomorrow.append("datestart", reqDates.tomorrow);
+    reqParamsTomorrow.append("dateend", reqDates.tomorrow);
+
+    const respTomorrow = await fetch("https://www.e-solat.gov.my/index.php?r=esolatApi/takwimsolat&period=duration&zone=wly01", {
+        method: "post",
+        body: reqParamsTomorrow
+    });
+
+    const tomorrowPrayerTimes = await respTomorrow.json();
+
+    return {
+        prayerTime: [todayPrayerTimes.prayerTime[0], tomorrowPrayerTimes.prayerTime[0]]
+    };
+} 
