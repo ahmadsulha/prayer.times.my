@@ -29,6 +29,12 @@ body {
     gap: 1rem;
 }
 
+#state-title {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 #next-prayer {
     display: flex;
     justify-content: center;

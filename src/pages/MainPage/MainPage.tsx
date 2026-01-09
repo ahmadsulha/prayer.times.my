@@ -51,6 +51,9 @@ function MainPage(){
             <div id="date">
                 {prayerTimes?.today?.hijri} | {prayerTimes?.today?.date}
             </div>
+            <div id="state-title">
+                <h3>KL Prayer Times</h3>
+            </div>
             <div id="next-prayer">
                 <h1>Upcoming prayer</h1>
                 <h3>{nextPrayer?.prayerName}</h3>
